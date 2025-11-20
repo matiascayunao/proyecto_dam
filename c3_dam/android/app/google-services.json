@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "866933126338",
+    "project_id": "daw-proyecto-936de",
+    "storage_bucket": "daw-proyecto-936de.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866933126338:android:e0b2399259b9c7f9c7f75b",
+        "android_client_info": {
+          "package_name": "com.example.c3_dam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwrlg6pXjPUkWZ0VQyz9qlDT-oI89HBzs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
