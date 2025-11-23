@@ -8,4 +8,20 @@ class EventoService {
   Stream<QuerySnapshot> eventos() {
     return FirebaseFirestore.instance.collection('eventos').snapshots();
   }
+
+  Future<QuerySnapshot> categorias_combo() {
+    return FirebaseFirestore.instance.collection('categorias').orderBy('nombre').get();
+  }
+
+  Future<void> agregarEvento(String titulo, DateTime fechaHora, String lugar, String categoria, String autor) {
+    return FirebaseFirestore.instance.collection('eventos').doc().set({'titulo': titulo, 'fechaHora': Timestamp.fromDate(fechaHora.toLocal()), 'lugar': lugar, 'categoria': categoria, 'autor': autor});
+  }
+
+  Future<void> borrarEvento(String id) {
+    return FirebaseFirestore.instance.collection('eventos').doc(id).delete();
+  }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> detalleEvento(String id) {
+    return FirebaseFirestore.instance.collection('eventos').doc(id).get();
+  }
 }

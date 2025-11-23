@@ -1,4 +1,4 @@
-import 'package:c3_dam/pages/tabs/home_page.dart';
+import 'package:c3_dam/pages/home_page.dart';
 import 'package:c3_dam/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

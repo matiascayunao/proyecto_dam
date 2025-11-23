@@ -1,3 +1,4 @@
+import 'package:c3_dam/pages/evento_detalle.dart';
 import 'package:c3_dam/services/evento_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,17 @@ class _LstEvtPageState extends State<LstEvtPage> {
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
               var evento = snapshot.data!.docs[index];
-              return ListTile(leading: Icon(MdiIcons.calendar), title: Text(evento['titulo']), subtitle: Text(evento['categoria']));
+              return ListTile(
+                leading: Icon(MdiIcons.calendar),
+                title: Text(evento['titulo']),
+                subtitle: Text(evento['categoria']),
+                trailing: OutlinedButton(
+                  child: Icon(Icons.align_vertical_bottom),
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => EventoDetalle(id: evento.id)));
+                  },
+                ),
+              );
             },
           );
         },

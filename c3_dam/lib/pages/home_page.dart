@@ -1,9 +1,10 @@
-import 'package:c3_dam/pages/tabs/lst_evt_page.dart';
-import 'package:c3_dam/pages/tabs/lst_evt_user_page.dart';
+import 'package:c3_dam/pages/evento_agregar.dart';
+import 'package:c3_dam/tabs/lst_evt_page.dart';
+import 'package:c3_dam/tabs/lst_evt_user_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import '../../services/auth_service.dart';
+import '../services/auth_service.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
@@ -63,7 +64,12 @@ class _HomePageState extends State<HomePage> {
         },
       ),
 
-      floatingActionButton: FloatingActionButton(child: Icon(Icons.add), onPressed: () {}),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => EventoAgregar()));
+        },
+      ),
     );
   }
 }
