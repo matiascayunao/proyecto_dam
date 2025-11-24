@@ -5,125 +5,125 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:c3_dam/utils/app_utils.dart';
 
-class EventoDetalle extends StatelessWidget {
+class EventoDetalle extends StatefulWidget {
   const EventoDetalle({super.key, required this.id});
   final String id;
 
   @override
+  State<EventoDetalle> createState() => _EventoDetalleState();
+}
+
+class _EventoDetalleState extends State<EventoDetalle> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(title: Text("Detalle del evento")),
-      body: Padding(
-        padding: EdgeInsets.all(5),
-        child: FutureBuilder(
-          future: EventoService().detalleEvento(id),
-          builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
-            if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
+      body: Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [Colors.lightBlueAccent, Colors.deepPurple]),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(color: Color(0xDDFFFFFF), borderRadius: BorderRadius.circular(15)),
+          child: FutureBuilder(
+            future: EventoService().detalleEvento(widget.id),
+            builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+              if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
 
-            var evento = snapshot.data!;
-            Timestamp ts = evento['fechaHora'];
-            DateTime fechaHora = ts.toDate().toLocal();
-            String fechaTxt = DateFormat('dd/MM/yyyy').format(fechaHora);
-            String horaTxt = DateFormat('HH:mm').format(fechaHora);
-            String categoriaNombre = evento['categoria'];
+              var evento = snapshot.data!;
+              Timestamp ts = evento['fechaHora'];
+              DateTime fechaHora = ts.toDate().toLocal();
+              String fechaTxt = DateFormat('dd/MM/yyyy').format(fechaHora);
+              String horaTxt = DateFormat('HH:mm').format(fechaHora);
+              String categoriaNombre = evento['categoria'];
 
-            final user = FirebaseAuth.instance.currentUser;
-            String autorActual = user?.displayName ?? user?.email ?? "";
-            bool esAutor = autorActual == (evento['autor'] ?? "");
+              final user = FirebaseAuth.instance.currentUser;
+              String autorActual = user?.displayName ?? user?.email ?? "";
+              bool esAutor = autorActual == (evento['autor'] ?? "");
 
-            return FutureBuilder(
-              future: EventoService().categoriaPorNombre(categoriaNombre),
-              builder: (context, AsyncSnapshot<QuerySnapshot> catSnap) {
-                String fotoCat = "";
+              return FutureBuilder(
+                future: EventoService().categoriaPorNombre(categoriaNombre),
+                builder: (context, AsyncSnapshot<QuerySnapshot> catSnap) {
+                  String fotoCat = "";
 
-                if (catSnap.hasData && catSnap.data!.docs.isNotEmpty) {
-                  var catDoc = catSnap.data!.docs.first;
-                  fotoCat = catDoc['foto'].toString();
-                }
+                  if (catSnap.hasData && catSnap.data!.docs.isNotEmpty) {
+                    var catDoc = catSnap.data!.docs.first;
+                    fotoCat = catDoc['foto'].toString();
+                  }
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Informacion del evento"),
-                    SizedBox(height: 10),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Informacion del evento"),
+                      Row(children: [Text("Titulo: "), Text("${evento['titulo']}")]),
+                      Row(children: [Text("Fecha: "), Text(fechaTxt)]),
 
-                    fotoCat != "" ? Center(child: Image.asset("assets/$fotoCat", height: 140, fit: BoxFit.contain)) : SizedBox(),
+                      Row(children: [Text("Hora: "), Text(horaTxt)]),
 
-                    SizedBox(height: 10),
+                      Row(children: [Text("Lugar: "), Text("${evento['lugar']}")]),
 
-                    Row(
-                      children: [
-                        Text("Titulo: "),
-                        Expanded(child: Text("${evento['titulo']}")),
-                      ],
-                    ),
-                    SizedBox(height: 5),
+                      Row(children: [Text("Autor: "), Text("${evento['autor']}")]),
 
-                    Row(children: [Text("Fecha: "), Text(fechaTxt)]),
-                    SizedBox(height: 5),
+                      Row(children: [Text("Categoria: "), Text(categoriaNombre)]),
 
-                    Row(children: [Text("Hora: "), Text(horaTxt)]),
-                    SizedBox(height: 5),
+                      Spacer(),
 
-                    Row(
-                      children: [
-                        Text("Lugar: "),
-                        Expanded(child: Text("${evento['lugar']}")),
-                      ],
-                    ),
-                    SizedBox(height: 5),
+                      fotoCat != ""
+                          ? Container(
+                              child: Image.asset(
+                                "assets/$fotoCat",
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container();
+                                },
+                              ),
+                            )
+                          : Container(),
 
-                    Row(
-                      children: [
-                        Text("Autor: "),
-                        Expanded(child: Text("${evento['autor']}")),
-                      ],
-                    ),
-                    SizedBox(height: 5),
+                      Spacer(),
 
-                    Row(
-                      children: [
-                        Text("Categoria: "),
-                        Expanded(child: Text(categoriaNombre)),
-                      ],
-                    ),
+                      esAutor
+                          ? Container(
+                              width: double.infinity,
+                              margin: EdgeInsets.only(bottom: 10),
+                              child: FilledButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: Colors.deepOrange),
+                                child: Text("Eliminar"),
+                                onPressed: () async {
+                                  bool aceptaBorrar = await AppUtils.mostrarConfirmacion(context, "Borrar evento", "¿Desea borrar este evento ${evento['titulo']}?");
 
-                    Spacer(),
-
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            child: Text("Volver"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 10),
-                        esAutor
-                            ? Expanded(
-                                child: FilledButton(
-                                  child: Text("Eliminar"),
-                                  onPressed: () async {
-                                    bool ok = await AppUtils.mostrarConfirmacion(context, "Borrar evento", "¿Desea borrar este evento?");
-                                    if (!ok) return;
-
-                                    await EventoService().borrarEvento(id);
+                                  if (aceptaBorrar) {
+                                    await EventoService().borrarEvento(widget.id);
+                                    var ctxSnack = _scaffoldKey.currentContext ?? context;
+                                    AppUtils.mostrarSnackbar(ctxSnack, 'Evento Borrado');
                                     Navigator.pop(context);
-                                  },
-                                ),
-                              )
-                            : SizedBox(),
-                      ],
-                    ),
-                  ],
-                );
-              },
-            );
-          },
+                                  }
+                                },
+                              ),
+                            )
+                          : Container(),
+
+                      Container(
+                        width: double.infinity,
+                        margin: EdgeInsets.only(bottom: 15),
+                        child: OutlinedButton(
+                          child: Text("Volver"),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
     );
