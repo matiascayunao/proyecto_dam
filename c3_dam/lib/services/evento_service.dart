@@ -24,4 +24,12 @@ class EventoService {
   Future<DocumentSnapshot<Map<String, dynamic>>> detalleEvento(String id) {
     return FirebaseFirestore.instance.collection('eventos').doc(id).get();
   }
+
+  Stream<QuerySnapshot> eventosUsuario(String autor) {
+    return FirebaseFirestore.instance.collection('eventos').where('autor', isEqualTo: autor).snapshots();
+  }
+
+  Future<QuerySnapshot> categoriaPorNombre(String nombre) {
+    return FirebaseFirestore.instance.collection('categorias').where('nombre', isEqualTo: nombre).limit(1).get();
+  }
 }
