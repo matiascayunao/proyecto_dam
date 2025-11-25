@@ -21,10 +21,11 @@ class _EventoAgregarState extends State<EventoAgregar> {
   DateTime? fechaSeleccionada;
   TimeOfDay? horaSeleccionada;
 
+  Key dropKey = UniqueKey();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Agregar Evento")),
       body: Padding(
         padding: EdgeInsets.all(10),
         child: Form(
@@ -117,12 +118,16 @@ class _EventoAgregarState extends State<EventoAgregar> {
                     }
                     var categorias = snapshot.data!.docs;
                     return DropdownButtonFormField(
+                      key: dropKey,
+                      value: categoriaSeleccionada,
                       decoration: InputDecoration(labelText: "Categoria"),
                       items: categorias.map((categoria) {
                         return DropdownMenuItem(child: Text(categoria['nombre']), value: categoria['nombre'].toString());
                       }).toList(),
                       onChanged: (valor) {
-                        categoriaSeleccionada = valor;
+                        setState(() {
+                          categoriaSeleccionada = valor;
+                        });
                       },
                       validator: (v) {
                         if (categoriaSeleccionada == null) return "Seleccione la categoria";
@@ -144,7 +149,21 @@ class _EventoAgregarState extends State<EventoAgregar> {
                       String autor = FirebaseAuth.instance.currentUser?.displayName ?? FirebaseAuth.instance.currentUser?.email ?? "Sin autor";
 
                       await EventoService().agregarEvento(tituloCtrl.text.trim(), fechaHora, lugarCtrl.text.trim(), categoriaSeleccionada!, autor);
-                      Navigator.pop(context);
+
+                      formKey.currentState!.reset();
+
+                      setState(() {
+                        tituloCtrl.clear();
+                        fechaCtrl.clear();
+                        horaCtrl.clear();
+                        lugarCtrl.clear();
+
+                        categoriaSeleccionada = null;
+                        fechaSeleccionada = null;
+                        horaSeleccionada = null;
+
+                        dropKey = UniqueKey();
+                      });
                     }
                   },
                 ),

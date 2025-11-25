@@ -1,3 +1,4 @@
+import 'package:c3_dam/constants.dart';
 import 'package:c3_dam/services/evento_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,7 +25,7 @@ class _EventoDetalleState extends State<EventoDetalle> {
       body: Container(
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [Colors.lightBlueAccent, Colors.deepPurple]),
+          gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [Color(kSecondary), Color(kPrimary)]),
         ),
         child: Container(
           padding: EdgeInsets.all(10),

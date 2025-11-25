@@ -1,3 +1,4 @@
+import 'package:c3_dam/constants.dart';
 import 'package:c3_dam/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -21,7 +22,16 @@ class _LoginPageState extends State<LoginPage> {
         width: double.infinity,
         height: double.infinity,
         padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(color: Colors.lightBlueAccent),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [
+              Color(kSecondary), // azul
+              Color(kPrimary), // verde
+            ],
+          ),
+        ),
         child: Center(
           child: Container(
             width: double.infinity,
@@ -37,6 +47,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Text("Bienvenido a TicketMaster"),
                       OutlinedButton.icon(
                         icon: Icon(MdiIcons.account, color: Colors.red.shade700),
                         label: Text('Iniciar con Google'),

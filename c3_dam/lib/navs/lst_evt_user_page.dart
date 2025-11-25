@@ -1,23 +1,26 @@
 import 'package:c3_dam/pages/evento_detalle.dart';
 import 'package:c3_dam/services/evento_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class LstEvtPage extends StatefulWidget {
-  LstEvtPage({super.key});
+class LstEvtUserPage extends StatefulWidget {
+  LstEvtUserPage({super.key});
 
   @override
-  State<LstEvtPage> createState() => _LstEvtPageState();
+  State<LstEvtUserPage> createState() => _LstEvtUserPageState();
 }
 
-class _LstEvtPageState extends State<LstEvtPage> {
+class _LstEvtUserPageState extends State<LstEvtUserPage> {
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    String autorActual = user?.displayName ?? user?.email ?? "";
+
     return Padding(
       padding: EdgeInsets.all(10),
       child: StreamBuilder(
-        stream: EventoService().eventos(),
+        stream: EventoService().eventosUsuario(autorActual),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -29,7 +32,6 @@ class _LstEvtPageState extends State<LstEvtPage> {
             itemBuilder: (context, index) {
               var evento = snapshot.data!.docs[index];
               return ListTile(
-                leading: Icon(MdiIcons.calendar),
                 title: Text(evento['titulo']),
                 subtitle: Text(evento['categoria']),
                 trailing: OutlinedButton(

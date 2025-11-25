@@ -1,4 +1,5 @@
 import 'package:c3_dam/auth_wrapper.dart';
+import 'package:c3_dam/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -19,7 +20,10 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: [Locale('es')],
       title: 'DAM proyecto',
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(backgroundColor: Color(kSecondary)),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+      ),
       home: AuthWrapper(),
     );
   }

@@ -1,6 +1,7 @@
+import 'package:c3_dam/constants.dart';
 import 'package:c3_dam/pages/evento_agregar.dart';
-import 'package:c3_dam/tabs/lst_evt_page.dart';
-import 'package:c3_dam/tabs/lst_evt_user_page.dart';
+import 'package:c3_dam/navs/lst_evt_page.dart';
+import 'package:c3_dam/navs/lst_evt_user_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -16,7 +17,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _paginaSeleccionada = 0;
 
-  List<Widget> _paginas = [LstEvtPage(), LstEvtUserPage()];
+  List<Widget> _paginas = [LstEvtPage(), EventoAgregar(), LstEvtUserPage()];
 
   @override
   Widget build(BuildContext context) {
@@ -24,50 +25,71 @@ class _HomePageState extends State<HomePage> {
     final authService = AuthService();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Listado de Eventos"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () async {
-              await authService.signOut();
-            },
+      appBar: AppBar(title: Text("Listado de Eventos")),
+
+      endDrawer: NavigationDrawer(
+        backgroundColor: Color(kPrimary),
+        indicatorColor: Colors.white,
+        children: [
+          DrawerHeader(
+            child: Column(
+              children: [
+                Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(bottom: 8),
+                  child: Icon(Icons.account_circle, size: 85, color: Colors.white),
+                ),
+
+                Text(user?.displayName ?? user?.email ?? "Sin nombre", style: TextStyle(fontSize: 16)),
+              ],
+            ),
+          ),
+
+          Container(
+            margin: EdgeInsets.only(top: 10),
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            width: double.infinity,
+            child: FilledButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.deepOrange),
+              child: Text("Cerrar sesión"),
+              onPressed: () async {
+                await authService.signOut();
+                Navigator.pop(context);
+              },
+            ),
           ),
         ],
       ),
 
-      body: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(8),
-            width: double.infinity,
-            color: Colors.blue.shade100,
-            child: Text(user?.displayName ?? user?.email ?? "Sin nombre", style: TextStyle(fontSize: 16)),
-          ),
-
-          Expanded(
-            child: IndexedStack(index: _paginaSeleccionada, children: _paginas),
-          ),
-        ],
+      body: Padding(
+        padding: EdgeInsets.all(5),
+        child: IndexedStack(children: _paginas, index: _paginaSeleccionada),
       ),
 
       bottomNavigationBar: NavigationBar(
+        backgroundColor: Color(kSecondary),
         destinations: [
-          NavigationDestination(icon: Icon(MdiIcons.calendar), label: "Eventos Globales"),
-          NavigationDestination(icon: Icon(MdiIcons.calendar), label: "Eventos Propios"),
+          NavigationDestination(
+            icon: Icon(MdiIcons.calendarOutline, color: Colors.white),
+            selectedIcon: Icon(MdiIcons.calendar, size: 30, color: Color(kPrimary)),
+            label: "Eventos Globales",
+          ),
+          NavigationDestination(
+            icon: Icon(MdiIcons.plusCircleOutline, color: Colors.white),
+            selectedIcon: Icon(MdiIcons.plusCircle, size: 30, color: Color(kPrimary)),
+            label: "Agregar Evento",
+          ),
+          NavigationDestination(
+            icon: Icon(MdiIcons.calendarAccountOutline, color: Colors.white),
+            selectedIcon: Icon(MdiIcons.calendarAccount, size: 30, color: Color(kPrimary)),
+            label: "Eventos Propios",
+          ),
         ],
         selectedIndex: _paginaSeleccionada,
         onDestinationSelected: (indicePagina) {
           setState(() {
             _paginaSeleccionada = indicePagina;
           });
-        },
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => EventoAgregar()));
         },
       ),
     );
