@@ -42,6 +42,21 @@ class _EventoAgregarState extends State<EventoAgregar> {
                     if (titulo!.isEmpty) {
                       return "Ingrese el titulo";
                     }
+                    if (titulo.length < 3) {
+                      return "El titulo debe tener al menos 3 caracteres";
+                    }
+                    if (titulo.length > 50) {
+                      return "El titulo no debe exceder los 50 caracteres";
+                    }
+                    if (titulo.trim().contains('  ')) {
+                      return "El titulo no puede contener espacios consecutivos";
+                    }
+                    if (titulo.startsWith(' ') || titulo.endsWith(' ')) {
+                      return "El titulo no puede comenzar o terminar con un espacio";
+                    }
+                    if (titulo.contains(RegExp(r'[!@#\$%\^&\*\(\)_\+\-=\[\]\{\};:"\\|,.<>\/?]'))) {
+                      return "El titulo no puede contener caracteres especiales";
+                    }
                     return null;
                   },
                 ),
@@ -54,7 +69,7 @@ class _EventoAgregarState extends State<EventoAgregar> {
                   readOnly: true,
                   decoration: InputDecoration(labelText: "Fecha", border: InputBorder.none, suffixIcon: Icon(Icons.calendar_month)),
                   onTap: () async {
-                    DateTime? fecha = await showDatePicker(context: context, initialDate: fechaSeleccionada ?? DateTime.now(), firstDate: DateTime(2020), lastDate: DateTime(2100));
+                    DateTime? fecha = await showDatePicker(context: context, initialDate: fechaSeleccionada ?? DateTime.now(), firstDate: DateTime.now(), lastDate: DateTime(2100));
 
                     if (fecha == null) return;
 
@@ -69,6 +84,9 @@ class _EventoAgregarState extends State<EventoAgregar> {
                   validator: (v) {
                     if (fechaSeleccionada == null) {
                       return "Seleccione la fecha";
+                    }
+                    if (fechaSeleccionada!.isBefore(DateTime.now())) {
+                      return "La fecha no puede ser anterior a la fecha actual";
                     }
                     return null;
                   },
@@ -110,6 +128,15 @@ class _EventoAgregarState extends State<EventoAgregar> {
                   validator: (lugar) {
                     if (lugar!.isEmpty) {
                       return 'Indique el lugar';
+                    }
+                    if (lugar.length < 3) {
+                      return 'El lugar debe tener al menos 3 caracteres';
+                    }
+                    if (lugar.length > 100) {
+                      return 'El lugar no debe exceder los 100 caracteres';
+                    }
+                    if (lugar.startsWith(' ') || lugar.endsWith(' ')) {
+                      return "El lugar no puede comenzar o terminar con un espacio";
                     }
                     return null;
                   },
@@ -153,11 +180,9 @@ class _EventoAgregarState extends State<EventoAgregar> {
                     if (formKey.currentState!.validate()) {
                       DateTime fechaHora = DateTime(fechaSeleccionada!.year, fechaSeleccionada!.month, fechaSeleccionada!.day, horaSeleccionada!.hour, horaSeleccionada!.minute);
 
-                      String autor = FirebaseAuth.instance.currentUser?.displayName ?? FirebaseAuth.instance.currentUser?.email ?? "Sin autor";
+                      String autor = FirebaseAuth.instance.currentUser?.displayName ?? "Sin autor";
 
                       await EventoService().agregarEvento(tituloCtrl.text.trim(), fechaHora, lugarCtrl.text.trim(), categoriaSeleccionada!, autor);
-
-                      formKey.currentState!.reset(); //??????????????????????????????
 
                       setState(() {
                         tituloCtrl.clear();

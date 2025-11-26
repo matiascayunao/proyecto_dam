@@ -39,7 +39,7 @@ class _EventoDetalleState extends State<EventoDetalle> {
 
               var evento = snapshot.data!;
               Timestamp ts = evento['fechaHora'];
-              DateTime fechaHora = ts.toDate().toLocal();
+              DateTime fechaHora = ts.toDate();
               String fechaTxt = DateFormat('dd/MM/yyyy').format(fechaHora);
               String horaTxt = DateFormat('HH:mm').format(fechaHora);
               String categoriaNombre = evento['categoria'];

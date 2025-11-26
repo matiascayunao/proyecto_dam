@@ -4,45 +4,24 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
-  bool _googleInit = false;
-
-  Future<void> _ensureGoogleInit() async {
-    if (_googleInit) return;
-    await _googleSignIn.initialize();
-    _googleInit = true;
-  }
-
   Future<UserCredential?> signInWithGoogle() async {
-    await _ensureGoogleInit();
-
     try {
-      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
+      final GoogleSignInAccount googleUser = await GoogleSignIn.instance.authenticate();
 
-      const scopes = ['email', 'profile'];
-      final authz = await googleUser.authorizationClient.authorizationForScopes(scopes) ?? await googleUser.authorizationClient.authorizeScopes(scopes);
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-      final accessToken = authz.accessToken;
+      final OAuthCredential credential = GoogleAuthProvider.credential(idToken: googleAuth.idToken);
 
-      final idToken = googleUser.authentication.idToken;
-      if (idToken == null) {
-        throw Exception("No se pudo obtener idToken de Google");
-      }
+      final UserCredential userCredential = await _auth.signInWithCredential(credential);
 
-      final credential = GoogleAuthProvider.credential(idToken: idToken, accessToken: accessToken);
-
-      return await _auth.signInWithCredential(credential);
-    } on GoogleSignInException catch (e) {
-      if (e.code == GoogleSignInExceptionCode.canceled) {
-        return null;
-      }
-      rethrow;
+      return userCredential;
+    } catch (e) {
+      return null;
     }
   }
 
   Future<void> signOut() async {
-    await _ensureGoogleInit();
-    await _googleSignIn.signOut();
+    await GoogleSignIn.instance.signOut();
     await _auth.signOut();
   }
 

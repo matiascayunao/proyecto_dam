@@ -10,7 +10,7 @@ class EventoService {
   }
 
   Future<void> agregarEvento(String titulo, DateTime fechaHora, String lugar, String categoria, String autor) {
-    return FirebaseFirestore.instance.collection('eventos').doc().set({'titulo': titulo, 'fechaHora': Timestamp.fromDate(fechaHora.toLocal()), 'lugar': lugar, 'categoria': categoria, 'autor': autor});
+    return FirebaseFirestore.instance.collection('eventos').doc().set({'titulo': titulo, 'fechaHora': Timestamp.fromDate(fechaHora), 'lugar': lugar, 'categoria': categoria, 'autor': autor});
   }
 
   Future<void> borrarEvento(String id) {

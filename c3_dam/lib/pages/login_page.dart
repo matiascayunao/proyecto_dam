@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                       } catch (e) {
                         debugPrint("Google Sign-In error: $e");
                         setState(() {
-                          msgError = "Error al iniciar con Google. Revisa SHA-1/SHA-256 y google-services.json";
+                          msgError = "Ocurrió un error al iniciar sesión con Google";
                         });
                       }
                     },
