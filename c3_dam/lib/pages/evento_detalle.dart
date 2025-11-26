@@ -50,11 +50,11 @@ class _EventoDetalleState extends State<EventoDetalle> {
 
               return FutureBuilder(
                 future: EventoService().categoriaPorNombre(categoriaNombre),
-                builder: (context, AsyncSnapshot<QuerySnapshot> catSnap) {
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   String fotoCat = "";
 
-                  if (catSnap.hasData && catSnap.data!.docs.isNotEmpty) {
-                    var catDoc = catSnap.data!.docs.first;
+                  if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                    var catDoc = snapshot.data!.docs.first;
                     fotoCat = catDoc['foto'].toString();
                   }
 
@@ -64,27 +64,13 @@ class _EventoDetalleState extends State<EventoDetalle> {
                       Text("Informacion del evento"),
                       Row(children: [Text("Titulo: "), Text("${evento['titulo']}")]),
                       Row(children: [Text("Fecha: "), Text(fechaTxt)]),
-
                       Row(children: [Text("Hora: "), Text(horaTxt)]),
-
                       Row(children: [Text("Lugar: "), Text("${evento['lugar']}")]),
-
                       Row(children: [Text("Autor: "), Text("${evento['autor']}")]),
-
                       Row(children: [Text("Categoria: "), Text(categoriaNombre)]),
-
                       Spacer(),
 
-                      fotoCat != ""
-                          ? Container(
-                              child: Image.asset(
-                                "assets/$fotoCat",
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container();
-                                },
-                              ),
-                            )
-                          : Container(),
+                      if (fotoCat != "") Container(child: Image.asset("assets/$fotoCat")),
 
                       Spacer(),
 
@@ -99,9 +85,8 @@ class _EventoDetalleState extends State<EventoDetalle> {
                                   bool aceptaBorrar = await AppUtils.mostrarConfirmacion(context, "Borrar evento", "¿Desea borrar este evento ${evento['titulo']}?");
 
                                   if (aceptaBorrar) {
-                                    await EventoService().borrarEvento(widget.id);
-                                    var ctxSnack = _scaffoldKey.currentContext ?? context;
-                                    AppUtils.mostrarSnackbar(ctxSnack, 'Evento Borrado');
+                                    await EventoService().borrarEvento(evento.id);
+                                    AppUtils.mostrarSnackbar(_scaffoldKey.currentContext!, 'Evento Borrado');
                                     Navigator.pop(context);
                                   }
                                 },

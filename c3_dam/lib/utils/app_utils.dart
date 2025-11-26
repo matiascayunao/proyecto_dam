@@ -17,7 +17,11 @@ class AppUtils {
           content: Text(mensaje),
           actions: [
             TextButton(child: Text('CANCELAR'), onPressed: () => Navigator.pop(context, false)),
-            OutlinedButton(child: Text('ACEPTAR'), onPressed: () => Navigator.pop(context, true)),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(backgroundColor: Colors.red),
+              child: Text('ACEPTAR', style: TextStyle(color: Colors.black)),
+              onPressed: () => Navigator.pop(context, true),
+            ),
           ],
         );
       },

@@ -23,62 +23,59 @@ class _LoginPageState extends State<LoginPage> {
         height: double.infinity,
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [
-              Color(kSecondary), // azul
-              Color(kPrimary), // verde
-            ],
-          ),
+          gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [Color(kSecondary), Color(kPrimary)]),
         ),
         child: Center(
           child: Container(
             width: double.infinity,
-            margin: EdgeInsets.symmetric(horizontal: 20),
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 250),
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(color: Colors.white70, borderRadius: BorderRadius.circular(15)),
-            constraints: BoxConstraints(minHeight: 750),
-            child: ListView(
-              shrinkWrap: true,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: 600,
-                  child: Column(
+                Container(
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Bienvenido a TicketMaster"),
-                      OutlinedButton.icon(
-                        icon: Icon(MdiIcons.account, color: Colors.red.shade700),
-                        label: Text('Iniciar con Google'),
-                        onPressed: () async {
-                          setState(() {
-                            msgError = '';
-                          });
-
-                          try {
-                            final cred = await _authService.signInWithGoogle();
-
-                            if (cred == null) {
-                              setState(() {
-                                msgError = "Inicio de sesión cancelado";
-                              });
-                            }
-                          } catch (e) {
-                            debugPrint("Google Sign-In error: $e");
-                            setState(() {
-                              msgError = "Error al iniciar con Google. Revisa SHA-1/SHA-256 y google-services.json";
-                            });
-                          }
-                        },
-                      ),
-                      SizedBox(height: 15),
-                      Text(
-                        msgError,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.red),
-                      ),
+                      Text("Bienvenido a "),
+                      Text("TicketPunto", style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(bottom: 15),
+                  child: OutlinedButton.icon(
+                    icon: Icon(MdiIcons.account, color: Colors.red),
+                    label: Text('Iniciar con Google'),
+                    onPressed: () async {
+                      setState(() {
+                        msgError = '';
+                      });
+
+                      try {
+                        final cred = await _authService.signInWithGoogle();
+
+                        if (cred == null) {
+                          setState(() {
+                            msgError = "Inicio de sesión cancelado";
+                          });
+                        }
+                      } catch (e) {
+                        debugPrint("Google Sign-In error: $e");
+                        setState(() {
+                          msgError = "Error al iniciar con Google. Revisa SHA-1/SHA-256 y google-services.json";
+                        });
+                      }
+                    },
+                  ),
+                ),
+                Container(
+                  child: Text(
+                    msgError,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.red),
                   ),
                 ),
               ],

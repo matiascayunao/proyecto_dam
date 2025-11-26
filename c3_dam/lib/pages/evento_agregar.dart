@@ -1,3 +1,4 @@
+import 'package:c3_dam/constants.dart';
 import 'package:c3_dam/services/evento_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,11 +22,10 @@ class _EventoAgregarState extends State<EventoAgregar> {
   DateTime? fechaSeleccionada;
   TimeOfDay? horaSeleccionada;
 
-  Key dropKey = UniqueKey();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(kPrimary),
       body: Padding(
         padding: EdgeInsets.all(10),
         child: Form(
@@ -38,8 +38,10 @@ class _EventoAgregarState extends State<EventoAgregar> {
                 child: TextFormField(
                   controller: tituloCtrl,
                   decoration: InputDecoration(labelText: "Titulo"),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) return "Ingrese el titulo";
+                  validator: (titulo) {
+                    if (titulo!.isEmpty) {
+                      return "Ingrese el titulo";
+                    }
                     return null;
                   },
                 ),
@@ -65,7 +67,9 @@ class _EventoAgregarState extends State<EventoAgregar> {
                     });
                   },
                   validator: (v) {
-                    if (fechaSeleccionada == null) return "Seleccione la fecha";
+                    if (fechaSeleccionada == null) {
+                      return "Seleccione la fecha";
+                    }
                     return null;
                   },
                 ),
@@ -90,7 +94,9 @@ class _EventoAgregarState extends State<EventoAgregar> {
                     });
                   },
                   validator: (v) {
-                    if (horaSeleccionada == null) return "Seleccione la hora";
+                    if (horaSeleccionada == null) {
+                      return "Seleccione la hora";
+                    }
                     return null;
                   },
                 ),
@@ -101,8 +107,10 @@ class _EventoAgregarState extends State<EventoAgregar> {
                 child: TextFormField(
                   controller: lugarCtrl,
                   decoration: InputDecoration(labelText: "Lugar"),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) return "Ingrese el lugar";
+                  validator: (lugar) {
+                    if (lugar!.isEmpty) {
+                      return 'Indique el lugar';
+                    }
                     return null;
                   },
                 ),
@@ -111,27 +119,26 @@ class _EventoAgregarState extends State<EventoAgregar> {
                 padding: EdgeInsets.all(5),
                 margin: EdgeInsets.only(bottom: 5),
                 child: FutureBuilder(
-                  future: EventoService().categorias_combo(),
+                  future: EventoService().categoriasCombo(),
                   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
                       return Text("cargando categorias...");
                     }
                     var categorias = snapshot.data!.docs;
                     return DropdownButtonFormField(
-                      key: dropKey,
-                      value: categoriaSeleccionada,
                       decoration: InputDecoration(labelText: "Categoria"),
+                      validator: (categoria) {
+                        if (categoria == null) {
+                          return 'Seleccione una categoria';
+                        }
+                        return null;
+                      },
+
                       items: categorias.map((categoria) {
                         return DropdownMenuItem(child: Text(categoria['nombre']), value: categoria['nombre'].toString());
                       }).toList(),
                       onChanged: (valor) {
-                        setState(() {
-                          categoriaSeleccionada = valor;
-                        });
-                      },
-                      validator: (v) {
-                        if (categoriaSeleccionada == null) return "Seleccione la categoria";
-                        return null;
+                        categoriaSeleccionada = valor;
                       },
                     );
                   },
@@ -150,7 +157,7 @@ class _EventoAgregarState extends State<EventoAgregar> {
 
                       await EventoService().agregarEvento(tituloCtrl.text.trim(), fechaHora, lugarCtrl.text.trim(), categoriaSeleccionada!, autor);
 
-                      formKey.currentState!.reset();
+                      formKey.currentState!.reset(); //??????????????????????????????
 
                       setState(() {
                         tituloCtrl.clear();
@@ -161,8 +168,6 @@ class _EventoAgregarState extends State<EventoAgregar> {
                         categoriaSeleccionada = null;
                         fechaSeleccionada = null;
                         horaSeleccionada = null;
-
-                        dropKey = UniqueKey();
                       });
                     }
                   },
